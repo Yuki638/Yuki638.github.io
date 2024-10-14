@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Language Translator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #ff6347;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #ffebcd;
+            border-radius: 8px;
+            resize: none;
+        }
+
+        button {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #ff4500;
+        }
+
+        img {
+            margin-top: 20px;
+            width: 100px;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chicken Translator</h1>
+
+        <textarea id="inputText" placeholder="Enter text here..."></textarea>
+
+        <button onclick="translateToChicken()">Encode to Chicken</button>
+        <button onclick="translateToEnglish()">Decode to English</button>
+
+        <textarea id="outputText" placeholder="Your translation will appear here..." readonly></textarea>
+
+        <img src="https://i.imgur.com/NZzVDkT.png" alt="Cute Chicken">
+
+    </div>
+
+    <footer>Built with 🐔 by your friend!</footer>
+
+    <script>
+        // Function to remove 'hedefe', 'hidef', etc., for decoding
+        function decodeChickenText(text) {
+            return text.replace(/hedefe|hidef|hodef|hudef|adef|odef|udef/g, '');
+        }
+
+        // Function to encode text by inserting 'hedefe' or 'hidef'
+        function encodeToChickenText(text) {
+            let encodedText = '';
+            for (let i = 0; i < text.length; i++) {
+                encodedText += text[i];
+                if (text[i] !== ' ') {
+                    encodedText += (i % 2 === 0) ? 'hedefe' : 'hidef';
+                }
+            }
+            return encodedText;
+        }
+
+        // Handle encoding to chicken
+        function translateToChicken() {
+            const inputText = document.getElementById("inputText").value;
+            const chickenText = encodeToChickenText(inputText);
+            document.getElementById("outputText").value = chickenText;
+        }
+
+        // Handle decoding to English
+        function translateToEnglish() {
+            const inputText = document.getElementById("inputText").value;
+            const englishText = decodeChickenText(inputText);
+            document.getElementById("outputText").value = englishText;
+        }
+    </script>
+</body>
+</html>
