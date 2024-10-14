@@ -27,7 +27,7 @@ Whether you want to impress your friends with your newfound chicken knowledge or
 
 ## 📸 Screenshots 📸
 
-![Chickens Are Great!](https://i.imgur.com/NZzVDkT.png)
+![Chickens Are Great!](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExaW1sYWtkYnpucTVxeTUzaDFwZ2l6dGM3c3BkM3Rzbm1iZ20ydm1wdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iWgHn2JL1A5pU2OF0Q/giphy.webp)
 
 *Look at these cute little guys! They love translations just as much as you do!*
 
