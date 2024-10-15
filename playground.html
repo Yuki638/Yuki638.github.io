@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Playground</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .control-panel, .network-structure, .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background-color: white;
+            width: 90%;
+            max-width: 800px;
+        }
+        .control-group {
+            margin: 10px;
+        }
+        label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        input, select, button {
+            margin: 5px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        canvas {
+            margin-top: 30px;
+            width: 600px;
+            height: 400px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>🧠 Neural Network Playground 🧠</h1>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <div class="control-group">
+            <label for="activation">Activation Function:</label>
+            <select id="activation">
+                <option value="linear">Linear</option>
+                <option value="relu">ReLU</option>
+                <option value="sigmoid">Sigmoid</option>
+                <option value="tanh">Tanh</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="learning-rate">Learning Rate:</label>
+            <input type="number" id="learning-rate" value="0.01" step="0.001" min="0.001">
+        </div>
+
+        <div class="control-group">
+            <label for="train-test-ratio">Train/Test Ratio:</label>
+            <input type="number" id="train-test-ratio" value="0.8" step="0.1" min="0.1" max="0.9">
+        </div>
+
+        <div class="control-group">
+            <label for="input-layer">Input Features:</label>
+            <input type="number" id="input-layer" value="2" min="1">
+        </div>
+
+        <div class="control-group">
+            <label for="hidden-layers">Hidden Layers:</label>
+            <input type="number" id="hidden-layers" value="1" min="0">
+        </div>
+
+        <div class="control-group">
+            <label for="neurons-per-layer">Neurons per Hidden Layer:</label>
+            <input type="number" id="neurons-per-layer" value="4" min="1">
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="buttons">
+        <button id="play-btn">Play</button>
+        <button id="pause-btn" disabled>Pause</button>
+        <button id="refresh-btn">Refresh</button>
+    </div>
+
+    <!-- Training Visualization -->
+    <canvas id="loss-chart"></canvas>
+    <canvas id="data-chart"></canvas>
+
+    <script>
+        const playBtn = document.getElementById('play-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const lossChartCanvas = document.getElementById('loss-chart').getContext('2d');
+        const dataChartCanvas = document.getElementById('data-chart').getContext('2d');
+
+        let isTraining = false;
+        let model;
+        let trainingInterval;
+
+        // Chart for loss
+        const lossData = [];
+        const lossChart = new Chart(lossChartCanvas, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Loss',
+                    data: lossData,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: 'Epochs' } },
+                    y: { title: { display: true, text: 'Loss' }, min: 0 }
+                }
+            }
+        });
+
+        // Scatter plot for data visualization
+        const dataChart = new Chart(dataChartCanvas, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    { label: 'Training Data', data: [], backgroundColor: 'blue' },
+                    { label: 'Testing Data', data: [], backgroundColor: 'red' }
+                ]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: 'X1' }, min: -1, max: 2 },
+                    y: { title: { display: true, text: 'X2' }, min: -1, max: 2 }
+                }
+            }
+        });
+
+        function updateChart(epoch, loss) {
+            lossChart.data.labels.push(epoch);
+            lossChart.data.datasets[0].data.push(loss);
+            lossChart.update();
+        }
+
+        function updateDataChart(trainData, testData) {
+            dataChart.data.datasets[0].data = trainData;
+            dataChart.data.datasets[1].data = testData;
+            dataChart.update();
+        }
+
+        function createModel(inputFeatures, hiddenLayers, neuronsPerLayer, activationFunction) {
+            const model = tf.sequential();
+            model.add(tf.layers.dense({ units: neuronsPerLayer, inputShape: [inputFeatures], activation: activationFunction }));
+
+            for (let i = 0; i < hiddenLayers; i++) {
+                model.add(tf.layers.dense({ units: neuronsPerLayer, activation: activationFunction }));
+            }
+
+            model.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }));
+
+            return model;
+        }
+
+        function trainModel(model, trainXs, trainYs, epochs, learningRate) {
+            model.compile({
+                optimizer: tf.train.adam(learningRate),
+                loss: 'binaryCrossentropy',
+                metrics: ['accuracy'],
+            });
+
+            let epoch = 0;
+
+            trainingInterval = setInterval(() => {
+                if (!isTraining) return;
+                model.fit(trainXs, trainYs, { epochs: 1 }).then((history) => {
+                    const loss = history.history.loss[0];
+                    updateChart(epoch + 1, loss);
+                    epoch++;
+                });
+            }, 100);
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (!model) {
+                const activationFunction = document.getElementById('activation').value;
+                const learningRate = parseFloat(document.getElementById('learning-rate').value);
+                const inputFeatures = parseInt(document.getElementById('input-layer').value);
+                const hiddenLayers = parseInt(document.getElementById('hidden-layers').value);
+                const neuronsPerLayer = parseInt(document.getElementById('neurons-per-layer').value);
+
+                // Fixed XOR dataset for training
+                const xs = tf.tensor2d([[0, 0], [0, 1], [1, 0], [1, 1]]);
+                const ys = tf.tensor2d([[0], [1], [1], [0]]);
+
+                const trainTestRatio = parseFloat(document.getElementById('train-test-ratio').value);
+                const [trainXs, testXs] = tf.split(xs, [Math.floor(xs.shape[0] * trainTestRatio), xs.shape[0] - Math.floor(xs.shape[0] * trainTestRatio)]);
+                const [trainYs, testYs] = tf.split(ys, [Math.floor(ys.shape[0] * trainTestRatio), ys.shape[0] - Math.floor(ys.shape[0] * trainTestRatio)]);
+
+                updateDataChart(trainXs.arraySync(), testXs.arraySync());
+
+                model = createModel(inputFeatures, hiddenLayers, neuronsPerLayer, activationFunction);
+
+                isTraining = true;
+                trainModel(model, trainXs, trainYs, 1, learningRate);
+            } else {
+                isTraining = true;
+            }
+
+            playBtn.disabled = true;
+            pauseBtn.disabled = false;
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            isTraining = false;
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+        });
+
+        refreshBtn.addEventListener('click', () => {
+            isTraining = false;
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+
+            clearInterval(trainingInterval);
+            model = null;
+
+            lossData.length = 0;
+            lossChart.data.labels.length = 0;
+            lossChart.update();
+
+            dataChart.data.datasets[0].data.length = 0;
+            dataChart.data.datasets[1].data.length = 0;
+            dataChart.update();
+        });
+    </script>
+</body>
+</html>
