@@ -170,7 +170,7 @@
     </div>
     <!-- Page 6 -->
     <div id="page6" class="page">
-      <h1>You're the sweetest person i've ever known. I'll be always there for you no matter what I just care for you way too much ^^ you're the person i can count on you forever as well also as said we are gonna spend eterntity together XD. i'll always care for you. you're the person i'll always need you no matter what. I'm just being selfish ehe but yeah its true i just love you and your company way too much. I always miss you as well when you are not there thats why i dont wanna go to sleep early XD so that we can spend more time together. you're the best. you're my Baby Aya ^-^. i'll always have the most special place in my heart for you. whenever you are lonely you can always remember me. I'll always hold you close to my heart. I'll cheer you up when you are sad or having a bad day. In your good in your bad always together forever. i'll always hold your hand as well hehe ♡ </h1>
+      <h1>You're the sweetest person i've ever known. I'll be always there for you no matter what I just care for you way too much ^^ you're the person i can count on you forever as well also as said we are gonna spend eterntity together XD. I'll always care for you. You're the person I'll always need you no matter what. I'm just being selfish ehe but yeah it's true I just love you and your company way too much. I always miss you as well when you are not there, that's why I don't wanna go to sleep early XD so that we can spend more time together. You're the best. You're my Baby Aya ^-^. I'll always have the most special place in my heart for you. Whenever you are lonely you can always remember me. I'll always hold you close to my heart. I'll cheer you up when you are sad or having a bad day. In your good, in your bad, always together forever. I'll always hold your hand as well hehe ♡ </h1>
       <div class="last-container">
         <img src="https://i.giphy.com/bMLGNRoAy0Yko.webp" alt="Blushing Gif" class="gif">
         <button id="sweet">Sweet</button>
@@ -178,22 +178,41 @@
     </div>
   </div>
 
-  <script>
+  <!-- Firebase and App Logic -->
+  <script type="module">
+    // Import Firebase functions
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAISgq6JTTO99Vd-vdzh6I0Df9yOVazTpA",
+      authDomain: "foraya-81fdf.firebaseapp.com",
+      projectId: "foraya-81fdf",
+      storageBucket: "foraya-81fdf.firebasestorage.app",
+      messagingSenderId: "315846266549",
+      appId: "1:315846266549:web:21e39a33a25f5590b378fc",
+      measurementId: "G-7K2QSBN184"
+    };
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
     // Global variable to hold the interval for toggling the Aww button text
     let awwInterval = null;
-
+    
     // Page switching logic
     function showPage(pageId) {
       const pages = document.querySelectorAll('.page');
       pages.forEach(page => page.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
-
+    
       // If leaving page3, clear the toggle interval.
       if (pageId !== 'page3' && awwInterval !== null) {
         clearInterval(awwInterval);
         awwInterval = null;
       }
-
+    
       // If page 3 is active, set up continuous text toggle for the Aww button.
       if (pageId === 'page3') {
         const awwBtn = document.getElementById('aww');
@@ -208,7 +227,7 @@
         }, 500);
       }
     }
-
+    
     // Add click listener to the Aww button so that it advances to page4 when pressed.
     document.getElementById('aww').addEventListener('click', () => {
       if (awwInterval !== null) {
@@ -217,7 +236,7 @@
       }
       showPage('page4');
     });
-
+    
     // Button dodge effect
     function dodgeButton(btn) {
       const container = document.querySelector('.container');
@@ -231,7 +250,7 @@
       btn.style.left = randomX + 'px';
       btn.style.top = randomY + 'px';
     }
-
+    
     // Page 1 logic
     document.getElementById('yes1').addEventListener('click', () => {
       showPage('page2');
@@ -240,7 +259,7 @@
     no1.addEventListener('mouseover', () => {
       dodgeButton(no1);
     });
-
+    
     // Page 2 logic
     document.getElementById('yes2').addEventListener('click', () => {
       showPage('page3');
@@ -249,35 +268,35 @@
     no2.addEventListener('mouseover', () => {
       dodgeButton(no2);
     });
-
+    
     // Page 4 logic
     document.getElementById('okay').addEventListener('click', () => {
       showPage('page5');
     });
-
+    
     // Page 5 logic
     document.getElementById('cute').addEventListener('click', () => {
       showPage('page6');
     });
-
-    // Page 6 logic: IP prompt and storage
+    
+    // Page 6 logic: IP prompt and storage using Firebase Firestore
     document.getElementById('sweet').addEventListener('click', promptForIP);
     function promptForIP() {
       var ip = prompt("if you are happy please enter your ip ;)");
       if (ip !== null && ip.trim() !== "") {
-        fetch('store_ip.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ ip: ip.trim() })
+        addDoc(collection(db, "ips"), {
+          ip: ip.trim(),
+          timestamp: serverTimestamp()
         })
-        .then(response => response.text())
-        .then(data => console.log("Server response:", data))
-        .catch(error => console.error('Error:', error));
+        .then(() => {
+          console.log("IP stored successfully");
+        })
+        .catch((error) => {
+          console.error("Error storing IP: ", error);
+        });
       }
     }
-
+    
     // Music control logic
     const audio = document.getElementById('bg-music');
     const musicButton = document.getElementById('musicButton');
