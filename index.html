@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="A romantic interactive universe created with love for Anna.">
+  <title>For Anna ♡</title>
+
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&family=Sacramento&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>">
+</head>
+<body>
+
+  
+  <canvas id="universe-canvas" aria-hidden="true"></canvas>
+
+  
+  <div class="ambient-moon" id="global-moon" title="Click me..." role="button" tabindex="0" aria-label="Glowing Moon">
+    <div class="moon-body">
+      <div class="crater c1"></div>
+      <div class="crater c2"></div>
+      <div class="crater c3"></div>
+    </div>
+    <div class="moon-halo"></div>
+    <div class="moon-easter-sparkle" id="moon-sparkle"></div>
+  </div>
+
+  
+  <header class="site-header" id="site-header">
+    <div class="header-left">
+      <span class="header-logo" id="header-logo" title="Our little universe">♡ <span class="gf-name-slot">Anna</span></span>
+    </div>
+    <div class="header-right">
+      <button class="nav-btn prev-btn hidden" id="prev-scene-btn" aria-label="Previous scene" title="Go back">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span>Back</span>
+      </button>
+      <div class="easter-tracker" id="easter-tracker" title="Secret Easter eggs discovered">
+        <span>✨</span> <span id="easter-count">0</span>/3
+      </div>
+    </div>
+  </header>
+
+  
+  <div class="music-player" id="music-player" aria-label="Background Music Player">
+    <div class="music-disc-wrap" id="music-toggle-btn" role="button" tabindex="0" aria-label="Play or pause music" title="Toggle music">
+      <div class="music-disc" id="music-disc">
+        <span class="disc-heart">♪</span>
+      </div>
+      <div class="equalizer-bars" id="equalizer-bars">
+        <span class="bar b1"></span>
+        <span class="bar b2"></span>
+        <span class="bar b3"></span>
+      </div>
+    </div>
+    <div class="music-details" id="music-details">
+      <span class="song-title" id="song-title">Our Melody ♡</span>
+      <div class="volume-slider-wrap">
+        <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.6" aria-label="Volume">
+      </div>
+    </div>
+  </div>
+
+  
+  <audio id="bg-audio" preload="auto" loop></audio>
+
+  
+  <main id="scene-viewport">
+
+    
+    <section class="scene active" id="scene-landing" data-scene="1">
+      <div class="scene-inner landing-inner">
+        <div class="sparkle-badge">A personal gift for you</div>
+        <h1 class="landing-title">
+          For <span class="gf-name-slot text-gradient">Anna</span> <span class="heart-pulse">♡</span>
+        </h1>
+        <p class="landing-subtitle">I made something special just for you.</p>
+        
+        <button class="glow-button open-btn" id="start-experience-btn" aria-label="Open experience">
+          <span class="btn-glow"></span>
+          <span class="btn-text">Open this ♡</span>
+        </button>
+      </div>
+    </section>
+
+    
+    <section class="scene" id="scene-hearts" data-scene="2">
+      <div class="scene-inner">
+        <div class="scene-heading-wrap">
+          <span class="scene-kicker">Heart by heart</span>
+          <h2 class="scene-title">
+            <span class="text-gradient">Lovie</span><br>
+            Do you know how much I love you?
+          </h2>
+          <p class="scene-desc">Click each tiles to reveal a little piece of my love.</p>
+          <div class="hearts-counter" id="hearts-counter">
+            Hearts revealed: <span id="hearts-clicked-count">0</span> / <span id="hearts-total-count">8</span>
+          </div>
+        </div>
+
+        <div class="floating-hearts-grid" id="floating-hearts-grid">
+          
+        </div>
+
+        <div class="scene-message-banner hidden" id="hearts-completed-banner">
+          <p class="banner-text">Okay... We are Ready to move forward ♡</p>
+          <button class="glow-button next-btn" id="hearts-next-btn">
+            <span>Yayyyy Lessgooo! ♡</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="scene" id="scene-question" data-scene="3">
+      <div class="scene-inner question-inner">
+        <span class="scene-kicker">A very serious question</span>
+        <h3 class="question-title">Will you stay with me forever?</h3>
+        <p class="question-subtext">Take your time... though there's really only one right answer ദ്ദി( •̀⩊< )</p>
+
+        <div class="buttons-arena" id="buttons-arena">
+          <button class="glow-button choice-btn yes-btn" id="btn-yes" aria-label="Yes, I will stay with you">
+            <span class="btn-glow"></span>
+            <span class="btn-content">YES ♡</span>
+          </button>
+
+          <button class="choice-btn no-btn" id="btn-no" aria-label="No button (playful runaway)">
+            NO
+          </button>
+        </div>
+
+        
+        <div class="celebration-box hidden" id="celebration-box">
+          <div class="celebration-sparkles">
+            <span class="kaomoji-face kaomoji-normal">( ˶• ⩊ •˶ ) ♡</span>
+            <span class="kaomoji-face kaomoji-wink">  ( ˶• ⩊ < )✧ ♡</span>
+          </div>
+          <h3 class="celebration-title">Good choice. ♡</h3>
+          <p class="celebration-text">I'd choose you too. Every single time.</p>
+          <button class="glow-button next-btn" id="question-next-btn">
+            <span>Awwwww →</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="scene" id="scene-night-sky" data-scene="4">
+      <div class="scene-inner sky-inner">
+        <div class="scene-heading-wrap">
+          <span class="scene-kicker">Look up</span>
+          <h2 class="scene-title">Our Starlight Universe</h2>
+          <p class="scene-desc">The night sky is filled with quiet messages for you.</p>
+        </div>
+
+        
+        <div class="constellation-arena" id="constellation-arena">
+          <canvas id="constellation-canvas"></canvas>
+          <div class="star-nodes-container" id="star-nodes-container">
+            
+          </div>
+        </div>
+
+        
+        <div class="star-message-card hidden" id="star-message-card">
+          <div class="star-card-glow"></div>
+          <button class="card-close-btn" id="star-card-close" aria-label="Close message">✕</button>
+          <div class="star-card-type" id="star-card-type">Starlight Whisper</div>
+          <p class="star-card-text" id="star-card-text">"Click a star to read its secret."</p>
+        </div>
+
+        <div class="sky-nav-wrap">
+          <button class="glow-button next-btn" id="sky-next-btn">
+            <span>Walk with me into the night →</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="scene" id="scene-together" data-scene="5">
+      <div class="scene-inner together-inner">
+        <div class="scene-heading-wrap">
+          <span class="scene-kicker">A quiet daydream</span>
+          <h2 class="scene-title">If we were together right now...</h2>
+          <p class="scene-desc">Touch anything around us to see what I'd do.</p>
+        </div>
+
+        
+        <div class="park-landscape" id="park-landscape">
+          
+          <div class="park-hotspot hotspot-moon" data-target="moon" title="The Moon" role="button" tabindex="0">
+            <span class="hotspot-pulse"></span>
+            <span class="hotspot-label">🌙 Moon</span>
+          </div>
+
+          
+          <div class="park-hotspot hotspot-stars" data-target="stars" title="The Night Sky" role="button" tabindex="0">
+            <span class="hotspot-pulse"></span>
+            <span class="hotspot-label">✨ Stars</span>
+          </div>
+
+          
+          <div class="park-hotspot hotspot-lamp" data-target="lamp" title="The Lamppost" role="button" tabindex="0">
+            <div class="lamp-light-cone"></div>
+            <span class="hotspot-pulse"></span>
+            <span class="hotspot-label">💡 Warm Lamp</span>
+          </div>
+
+          
+          <div class="park-hotspot hotspot-bench" data-target="bench" title="The Bench" role="button" tabindex="0">
+            <span class="hotspot-pulse"></span>
+            <span class="hotspot-label">🪑 Our Bench</span>
+          </div>
+
+          
+          <div class="park-hotspot hotspot-beside" data-target="beside" title="Beside Me" role="button" tabindex="0">
+            <span class="hotspot-pulse"></span>
+            <span class="hotspot-label">💫 Beside Me</span>
+          </div>
+
+          
+          <div class="park-hotspot hotspot-flowers" data-target="flowers" title="Night Flowers" role="button" tabindex="0">
+            <span class="hotspot-pulse"></span>
+            <span class="hotspot-label">🌸 Night Blossoms</span>
+          </div>
+
+          
+          <div class="park-illustration" aria-hidden="true">
+            <svg class="park-svg" viewBox="0 0 600 320" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <linearGradient id="lampGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#ffe699" stop-opacity="0.45"/>
+                  <stop offset="100%" stop-color="#ffe699" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="groundGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#161b33"/>
+                  <stop offset="100%" stop-color="#0b0f19"/>
+                </linearGradient>
+              </defs>
+
+              
+              <path d="M0,240 Q150,220 300,235 T600,225 L600,320 L0,320 Z" fill="url(#groundGrad)"/>
+              
+              
+              <path d="M120,245 L120,70 Q120,50 145,50 L155,50" stroke="#4a5568" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <ellipse cx="155" cy="50" rx="10" ry="6" fill="#ffe699"/>
+              
+              <polygon points="135,55 70,250 240,250 175,55" fill="url(#lampGlow)"/>
+
+              
+              <rect x="230" y="195" width="160" height="8" rx="3" fill="#8c6d58"/>
+              <rect x="230" y="208" width="160" height="8" rx="3" fill="#755a46"/>
+              <rect x="230" y="222" width="160" height="6" rx="2" fill="#5f4634"/>
+              
+              <rect x="245" y="222" width="6" height="28" fill="#3a4052"/>
+              <rect x="370" y="222" width="6" height="28" fill="#3a4052"/>
+
+              
+              
+              <ellipse cx="295" cy="168" rx="11" ry="12" fill="#1b213b"/>
+              <path d="M280,180 Q295,178 308,180 L310,215 Q295,218 280,215 Z" fill="#1b213b"/>
+              
+              <path d="M285,190 Q305,183 325,188 Q332,192 328,198" stroke="#1b213b" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+              
+              <ellipse cx="320" cy="172" rx="10" ry="11" fill="#2d2242"/>
+              
+              <path d="M322,165 Q335,175 330,195 Q325,190 322,175" fill="#2d2242"/>
+              <path d="M308,183 Q320,180 332,183 L330,215 Q320,217 308,215 Z" fill="#2d2242"/>
+
+              
+              <circle cx="180" cy="180" r="2.5" fill="#ffe082" class="firefly ff1"/>
+              <circle cx="210" cy="140" r="2" fill="#ffe082" class="firefly ff2"/>
+              <circle cx="390" cy="170" r="2.5" fill="#ffe082" class="firefly ff3"/>
+              <circle cx="430" cy="205" r="2" fill="#ffe082" class="firefly ff4"/>
+              <circle cx="260" cy="130" r="1.5" fill="#ffe082" class="firefly ff5"/>
+
+              
+              <circle cx="170" cy="245" r="3" fill="#f472b6"/>
+              <circle cx="185" cy="250" r="2.5" fill="#f9a8d4"/>
+              <circle cx="420" cy="242" r="3" fill="#f472b6"/>
+              <circle cx="435" cy="248" r="2.5" fill="#c084fc"/>
+              <circle cx="450" cy="244" r="2.5" fill="#f9a8d4"/>
+            </svg>
+          </div>
+        </div>
+
+        
+        <div class="whisper-box" id="whisper-box">
+          <div class="whisper-icon" id="whisper-icon">✨</div>
+          <div class="whisper-content">
+            <h4 class="whisper-title" id="whisper-title">Touch something</h4>
+            <p class="whisper-text" id="whisper-text">Tap the bench, the flowers, the sky, or the lamp above...</p>
+          </div>
+        </div>
+
+        <div class="together-nav-wrap">
+          <button class="glow-button next-btn" id="together-next-btn">
+            <span>Look at my wishes for us →</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="scene" id="scene-bucket-list" data-scene="6">
+      <div class="scene-inner">
+        <div class="scene-heading-wrap">
+          <span class="scene-kicker">Our Future Bucket List</span>
+          <h2 class="scene-title">Things I want to do with you ♡</h2>
+          <p class="scene-desc">Click each card to flip it and mark it as our promise.</p>
+        </div>
+
+        <div class="bucket-list-grid" id="bucket-list-grid">
+          
+        </div>
+
+        <div class="bucket-nav-wrap">
+          <button class="glow-button next-btn" id="bucket-next-btn">
+            <span>What I adore about you →</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="scene" id="scene-favorite-things" data-scene="7">
+      <div class="scene-inner">
+        <div class="scene-heading-wrap">
+          <span class="scene-kicker">Little details that mean a lot to me</span>
+          <h2 class="scene-title">Things I adore about you ♡</h2>
+          <p class="scene-desc">Click any card to read why it means so much to me.</p>
+        </div>
+
+        <div class="adore-grid" id="adore-grid">
+          
+        </div>
+
+        <div class="adore-nav-wrap">
+          <button class="glow-button next-btn" id="adore-next-btn">
+            <span>Our little memories →</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="scene" id="scene-gallery" data-scene="8">
+      <div class="scene-inner">
+        <div class="scene-heading-wrap">
+          <span class="scene-kicker">Keepsakes</span>
+          <h2 class="scene-title">Pieces of us ♡</h2>
+          <p class="scene-desc">Click any photo to see it up close.</p>
+        </div>
+
+        <div class="polaroid-gallery" id="polaroid-gallery">
+          
+        </div>
+
+        
+        <div class="lightbox-modal hidden" id="lightbox-modal" role="dialog" aria-modal="true" aria-label="Photo Lightbox">
+          <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+          <div class="lightbox-content">
+            <button class="lightbox-close-btn" id="lightbox-close-btn" aria-label="Close photo">✕</button>
+            <div class="lightbox-frame">
+              <img id="lightbox-img" src="" alt="Expanded memory">
+              <p class="lightbox-caption" id="lightbox-caption"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-nav-wrap">
+          <button class="glow-button next-btn" id="gallery-next-btn">
+            <span>A hidden secret... →</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="scene" id="scene-secret" data-scene="9">
+      <div class="scene-inner secret-inner">
+        <div class="scene-heading-wrap">
+          <span class="scene-kicker">Top Secret</span>
+          <h2 class="scene-title">There's something hidden here...</h2>
+          <p class="scene-desc">A little lock that only someone who knows me can open.</p>
+        </div>
+
+        <div class="secret-box-card" id="secret-box-card">
+          <div class="secret-icon-wrap" id="secret-lock-icon">
+            <span class="lock-graphic">🔒</span>
+          </div>
+
+          
+          <div class="secret-form" id="secret-form-container">
+            <label for="secret-password-input" class="sr-only">Secret Password</label>
+            <div class="input-wrap">
+              <input type="text" id="secret-password-input" placeholder="Enter the secret password..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+              <button class="glow-button submit-btn" id="secret-submit-btn">
+                <span>Unlock ♡</span>
+              </button>
+            </div>
+            <p class="secret-feedback" id="secret-feedback" aria-live="polite"></p>
+            <button class="hint-btn" id="secret-hint-btn" type="button">Need a hint?</button>
+          </div>
+
+          
+          <div class="secret-revealed-content hidden" id="secret-revealed-content">
+            <div class="secret-sparkle-header">✨ The Secret has been Unlocked✨</div>
+            <h3 class="secret-found-title">Hell yeahh.</h3>
+            <div class="secret-letter-body" id="secret-letter-body">
+              <p><span class="gf-name-slot">Anna</span>, you made it this far...</p>
+              <p>It means you took the time to explore stuff in our little adventure hehe. That curiosity and patience is one of the many many reasons I fell for you.</p>
+              <p>You are my favorite part of the boring world, my princess, my safe haven and my greatest treasure. I love you in a way that would actually worry a therapist and thrill a poet</p>
+            </div>
+            <div class="secret-heart-bloom">💖</div>
+          </div>
+        </div>
+
+        <div class="secret-nav-wrap">
+          <button class="glow-button next-btn" id="secret-next-btn">
+            <span>Read my letter to you →</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="scene" id="scene-letter" data-scene="10">
+      <div class="scene-inner letter-inner">
+        <div class="letter-paper" id="letter-paper">
+          <div class="letter-seal">♡</div>
+          <h2 class="letter-header">For <span class="gf-name-slot">Anna</span> ♡</h2>
+          
+          <div class="letter-body" id="letter-body">
+            
+          </div>
+
+          <div class="letter-signature">
+            <p class="sig-thankyou">Thank you for being you.</p>
+            <p class="sig-name">— <span class="my-name-slot">YOUR_NAME</span> ♡</p>
+          </div>
+        </div>
+
+        <div class="letter-nav-wrap">
+          <button class="glow-button hug-trigger-btn" id="letter-next-btn">
+            <span class="btn-glow"></span>
+            <span class="btn-text">Come here 🫂</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="scene" id="scene-hug" data-scene="11">
+      <div class="scene-inner hug-inner">
+        
+        <div class="warm-hug-aura" id="warm-hug-aura"></div>
+
+        
+        <div class="hug-animation-stage" id="hug-stage">
+          <div class="hug-silhouette boy-sil" id="sil-boy">
+            <svg viewBox="0 0 100 160" width="90" height="150">
+              <ellipse cx="50" cy="30" rx="16" ry="18" fill="currentColor"/>
+              <path d="M25,50 Q50,45 75,50 L80,120 Q50,125 20,120 Z" fill="currentColor"/>
+              
+              <path d="M70,60 Q95,75 85,95" stroke="currentColor" stroke-width="12" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <div class="hug-heart-center" id="hug-heart-center">
+            <span class="giant-heart">💖</span>
+          </div>
+
+          <div class="hug-silhouette girl-sil" id="sil-girl">
+            <svg viewBox="0 0 100 160" width="90" height="150">
+              <ellipse cx="50" cy="32" rx="15" ry="17" fill="currentColor"/>
+              
+              <path d="M35,25 Q20,40 30,70 Q45,65 38,40" fill="currentColor"/>
+              <path d="M28,52 Q50,48 72,52 L76,120 Q50,124 24,120 Z" fill="currentColor"/>
+              
+              <path d="M30,60 Q5,75 15,95" stroke="currentColor" stroke-width="12" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="hug-text-wrap" id="hug-text-wrap">
+          <h2 class="hug-title">Consider this a very long hug.</h2>
+          <p class="hug-subtitle">I love you so much, <span class="gf-name-slot">Anna</span>. ♡</p>
+        </div>
+
+        <div class="hug-nav-wrap">
+          <button class="glow-button next-btn" id="hug-next-btn">
+            <span>Stay in this moment →</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="scene" id="scene-epilogue" data-scene="12">
+      <div class="scene-inner epilogue-inner">
+        <div class="epilogue-sequence">
+          <p class="epilogue-line l1">That's all...</p>
+          <p class="epilogue-line l2">For now. ♡</p>
+          <p class="epilogue-line l3">There's so much more i want to express slowly.</p>
+          <p class="epilogue-greeting" id="epilogue-greeting">
+            I Love You So Much, <span class="gf-name-slot">Anna</span>. ♡
+          </p>
+        </div>
+
+        <div class="epilogue-actions">
+          <button class="replay-button" id="replay-btn" aria-label="Replay experience">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            <span>Replay from the beginning</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  
+  <nav class="scene-nav" id="scene-nav" aria-label="Scene progress">
+    <div class="nav-track" id="nav-track">
+      
+    </div>
+  </nav>
+
+  
+  <div class="toast-notification hidden" id="toast-notification" role="status" aria-live="polite">
+    <span class="toast-icon">✨</span>
+    <span class="toast-message" id="toast-message">Secret discovered!</span>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
